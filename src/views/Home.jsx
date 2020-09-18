@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import * as THREE from "three";
-import { MTLLoader, OBJLoader } from "three-obj-mtl-loader";
+import { OBJLoader } from "three-obj-mtl-loader";
 import OrbitControls from "three-orbitcontrols";
 
 class Home extends Component {
