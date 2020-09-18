@@ -86,8 +86,11 @@ class Viewer extends Component {
   draw(){
     for (let i = 0; i < this.state.cols; i++) {
       for (let j = 0; j < this.state.rows; j++) {
+        if (this.state.grid[i][j] === 1){
+          continue
+        }
         const shape = new THREE.BoxBufferGeometry(1, 1, 1);
-        const material = new THREE.MeshBasicMaterial({color: this.state.grid[i][j] == 1 ? 0xfc8f34 : 0xffffff});
+        const material = new THREE.MeshBasicMaterial({color:  0xffffff});
         let cube = new THREE.Mesh(shape, material);
         cube.position.x = i + i;
         cube.position.y = j + j;

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import Viewer from '../components/3DViewer';
 
-// import { OBJLoader } from 'three-obj-mtl-loader';
+import { OBJLoader } from 'three-obj-mtl-loader';
 
 class Home extends Component {
   componentDidMount() {
