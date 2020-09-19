@@ -7,13 +7,14 @@ class Viewer extends Component {
     super(props);
     this.state = {
       grid: null,
-      cols: 40,
-      rows: 40,
+      cols: 20,
+      rows: 20,
       scene: null,
       width: 0,
       height: 0,
       renderer: null,
       camera: null,
+      running: this.props.simulation_running
     };
   }
   render() {
@@ -22,9 +23,11 @@ class Viewer extends Component {
         style={{ width: '100%', height: '100vh' }}
         id="viewer"
         ref={(mount) => {
-          this.mount = mount;
-          this.state.height = this.mount.clientHeight
-          this.state.width = this.mount.clientWidth
+          if(mount){
+            this.mount = mount;
+            this.state.height = this.mount.clientHeight
+            this.state.width = this.mount.clientWidth
+          }
         }}
       ></div>
     );
@@ -35,7 +38,7 @@ class Viewer extends Component {
   }
 
   initialize() {
-    this.state.grid = this.make2DArray(this.state.cols, this.state.rows);
+    this.state.grid = this.make2DArray(this.props.cols, this.props.rows);
     this.state.scene = new THREE.Scene();
     this.state.renderer = new THREE.WebGLRenderer({ antialias: true });
     this.state.renderer.setClearColor(0x00000);
@@ -61,8 +64,8 @@ class Viewer extends Component {
     this.state.scene.add(lights[1]);
     this.state.scene.add(lights[2]);
 
-    for (let i = 0; i < this.state.cols; i++) {
-      for (let j = 0; j < this.state.rows; j++) {
+    for (let i = 0; i < this.props.cols; i++) {
+      for (let j = 0; j < this.props.rows; j++) {
         this.state.grid[i][j] = Math.round(Math.random())
       }
     }
@@ -85,10 +88,8 @@ class Viewer extends Component {
 
   draw = () => {
 
-   
-
-    for (let i = 0; i < this.state.cols; i++) {
-      for (let j = 0; j < this.state.rows; j++) {
+    for (let i = 0; i < this.props.cols; i++) {
+      for (let j = 0; j < this.props.rows; j++) {
         if (this.state.grid[i][j] === 1) {
           const shape = new THREE.BoxBufferGeometry(1, 1, 1);
           const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
@@ -104,13 +105,12 @@ class Viewer extends Component {
       }
     }
 
-    let next = this.make2DArray(this.state.cols, this.state.rows);
+    let next = this.make2DArray(this.props.cols, this.props.rows);
 
-    for (let i = 0; i < this.state.cols; i++) {
-      for (let j = 0; j < this.state.rows; j++) {
+    for (let i = 0; i < this.props.cols; i++) {
+      for (let j = 0; j < this.props.rows; j++) {
         let state = this.state.grid[i][j];
         // Count live neighbors!
-        let sum = 0;
         let neighbors = this.countNeighbors(this.state.grid, i, j);
 
         if (state == 0 && neighbors == 3) {
@@ -138,8 +138,8 @@ class Viewer extends Component {
     let sum = 0;
     for (let i = -1; i < 2; i++) {
       for (let j = -1; j < 2; j++) {
-        let col = (x + i + this.state.cols) % this.state.cols;
-        let row = (y + j + this.state.rows) % this.state.rows;
+        let col = (x + i + this.props.cols) % this.props.cols;
+        let row = (y + j + this.props.rows) % this.props.rows;
         sum += grid[col][row];
       }
     }
@@ -148,8 +148,11 @@ class Viewer extends Component {
   }
 
   animate = () => {
-    this.draw()
+    if(this.props.simulation_running){
+      this.draw()
+      this.props.increaseGeneration();
 
+    }
     this.renderScene();
 
     this.state.frameId = window.requestAnimationFrame(this.animate)
