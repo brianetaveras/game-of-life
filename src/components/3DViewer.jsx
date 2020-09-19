@@ -37,6 +37,7 @@ class Viewer extends Component {
     this.initialize();
   }
 
+
   initialize() {
     this.state.grid = this.make2DArray(this.props.cols, this.props.rows);
     this.state.scene = new THREE.Scene();
@@ -45,14 +46,14 @@ class Viewer extends Component {
     this.state.renderer.setSize(this.state.width, this.state.height);
     this.mount.append(this.state.renderer.domElement);
     this.state.camera = new THREE.PerspectiveCamera(
-      30,
+      40,
       this.state.width / this.state.height,
-      0.1,
+      1,
       1000
     );
     new OrbitControls(this.state.camera, this.state.renderer.domElement);
-    this.state.camera.position.z = 100;
-    this.state.camera.position.y = -150;
+    this.state.camera.position.z = 200;
+    this.state.camera.position.y = -270;
     this.state.camera.position.x = 50;
     this.state.camera.rotateX(1);
     this.state.camera.rotateY(0);
@@ -104,10 +105,6 @@ class Viewer extends Component {
             let cube = this.state.scene.getObjectByName(`cube-${i}-${j}`)
             cube.material.color.setHex(this.state.grid[i][j] === 1 ? 0xe3c778 : 0x000000);
           }
-          // let cube = this.state.scene.getObjectByName(`cube-${i}-${j}`);
-          // cube.material.color.setHex(0xfc8f34);
-          // // this.state.scene.remove(this.state.scene.getObjectByName(`cube-${i}-${j}`))
-        
       }
     }
 
@@ -167,6 +164,8 @@ class Viewer extends Component {
     if (this.state.renderer)
       this.state.renderer.render(this.state.scene, this.state.camera);
   };
+
+  
 }
 
 export default Viewer;
