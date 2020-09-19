@@ -53,7 +53,7 @@ class Viewer extends Component {
     );
     new OrbitControls(this.state.camera, this.state.renderer.domElement);
     this.state.camera.position.z = 200;
-    this.state.camera.position.y = -270;
+    this.state.camera.position.y = -300;
     this.state.camera.position.x = 50;
     this.state.camera.rotateX(1);
     this.state.camera.rotateY(0);
