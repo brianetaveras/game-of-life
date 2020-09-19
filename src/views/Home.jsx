@@ -20,10 +20,21 @@ class Home extends Component {
       }))
     }
 
+    this.handleInput = (e) => {
+      const value = e.target.value;
+      const name = e.target.name;
+      this.setState(state => ({
+        ...state,
+        [name]: value
+      }))
+    }
+
+  
     this.state = {
       ...store,
       toggleSimulationStatus: this.toggleSimulationStatus,
-      increaseGeneration: this.increaseGeneration
+      increaseGeneration: this.increaseGeneration,
+      handleInput: this.handleInput
     }
 
     

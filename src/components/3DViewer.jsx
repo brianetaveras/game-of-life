@@ -1,20 +1,20 @@
 import React, { Component } from 'react';
 import * as THREE from 'three';
 import OrbitControls from 'three-orbitcontrols';
+import { OBJLoader } from 'three-obj-mtl-loader';
 
 class Viewer extends Component {
   constructor(props) {
     super(props);
     this.state = {
       grid: null,
-      cols: 20,
-      rows: 20,
       scene: null,
       width: 0,
       height: 0,
       renderer: null,
       camera: null,
-      running: this.props.simulation_running
+      running: this.props.simulation_running,
+      initial_state: true,
     };
   }
   render() {
@@ -23,10 +23,10 @@ class Viewer extends Component {
         style={{ width: '100%', height: '100vh' }}
         id="viewer"
         ref={(mount) => {
-          if(mount){
+          if (mount) {
             this.mount = mount;
-            this.state.height = this.mount.clientHeight
-            this.state.width = this.mount.clientWidth
+            this.state.height = this.mount.clientHeight;
+            this.state.width = this.mount.clientWidth;
           }
         }}
       ></div>
@@ -43,8 +43,13 @@ class Viewer extends Component {
     this.state.renderer = new THREE.WebGLRenderer({ antialias: true });
     this.state.renderer.setClearColor(0x00000);
     this.state.renderer.setSize(this.state.width, this.state.height);
-    this.mount.append(this.state.renderer.domElement)
-    this.state.camera = new THREE.PerspectiveCamera(30, this.state.width / this.state.height, 0.1, 1000);
+    this.mount.append(this.state.renderer.domElement);
+    this.state.camera = new THREE.PerspectiveCamera(
+      30,
+      this.state.width / this.state.height,
+      0.1,
+      1000
+    );
     new OrbitControls(this.state.camera, this.state.renderer.domElement);
     this.state.camera.position.z = 100;
     this.state.camera.position.y = -150;
@@ -66,15 +71,13 @@ class Viewer extends Component {
 
     for (let i = 0; i < this.props.cols; i++) {
       for (let j = 0; j < this.props.rows; j++) {
-        this.state.grid[i][j] = Math.round(Math.random())
+        this.state.grid[i][j] = Math.round(Math.random());
       }
     }
 
-    this.draw()
+    this.draw();
     this.renderScene();
-    this.startAnimation()
-
-
+    this.startAnimation();
   }
 
   make2DArray(cols, rows) {
@@ -83,27 +86,32 @@ class Viewer extends Component {
       arr[i] = new Array(rows);
     }
 
-    return arr
+    return arr;
   }
 
   draw = () => {
-
     for (let i = 0; i < this.props.cols; i++) {
       for (let j = 0; j < this.props.rows; j++) {
-        if (this.state.grid[i][j] === 1) {
-          const shape = new THREE.BoxBufferGeometry(1, 1, 1);
-          const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
-          let cube = new THREE.Mesh(shape, material);
-          cube.name = `cube-${i}-${j}`
-          cube.position.x = i + i;
-          cube.position.y = j + j;
-          this.state.scene.add(cube);
-        } else {
-
-          this.state.scene.remove(this.state.scene.getObjectByName(`cube-${i}-${j}`))
-        }
+          if (this.state.initial_state) {
+            const shape = new THREE.SphereBufferGeometry(1, 3, 32);
+            const material = new THREE.MeshBasicMaterial({ color: this.state.grid[i][j] === 1 ? 0xe3c778 : 0x000000 });
+            let cube = new THREE.Mesh(shape, material);
+            cube.name = `cube-${i}-${j}`;
+            cube.position.x = i + i;
+            cube.position.y = j + j;
+            this.state.scene.add(cube);
+          } else {
+            let cube = this.state.scene.getObjectByName(`cube-${i}-${j}`)
+            cube.material.color.setHex(this.state.grid[i][j] === 1 ? 0xe3c778 : 0x000000);
+          }
+          // let cube = this.state.scene.getObjectByName(`cube-${i}-${j}`);
+          // cube.material.color.setHex(0xfc8f34);
+          // // this.state.scene.remove(this.state.scene.getObjectByName(`cube-${i}-${j}`))
+        
       }
     }
+
+    this.state.initial_state = false;
 
     let next = this.make2DArray(this.props.cols, this.props.rows);
 
@@ -123,16 +131,14 @@ class Viewer extends Component {
       }
     }
 
-    this.state.grid = next
-
-  }
+    this.state.grid = next;
+  };
 
   startAnimation = () => {
     if (!this.state.frameId) {
-      this.state.frameId = requestAnimationFrame(this.animate)
+      this.state.frameId = requestAnimationFrame(this.animate);
     }
-
-  }
+  };
 
   countNeighbors = (grid, x, y) => {
     let sum = 0;
@@ -145,26 +151,22 @@ class Viewer extends Component {
     }
     sum -= this.state.grid[x][y];
     return sum;
-  }
+  };
 
   animate = () => {
-    if(this.props.simulation_running){
-      this.draw()
+    if (this.props.simulation_running) {
+      this.draw();
       this.props.increaseGeneration();
-
     }
     this.renderScene();
 
-    this.state.frameId = window.requestAnimationFrame(this.animate)
-  }
+    this.state.frameId = window.requestAnimationFrame(this.animate);
+  };
 
   renderScene = () => {
-    if (this.state.renderer) this.state.renderer.render(this.state.scene, this.state.camera)
-
-  }
-
-
-
+    if (this.state.renderer)
+      this.state.renderer.render(this.state.scene, this.state.camera);
+  };
 }
 
 export default Viewer;

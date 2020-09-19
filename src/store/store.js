@@ -2,10 +2,11 @@ import {createContext} from 'react'
 
 
 export const store = {
-      cols: 30,
-      rows: 30,
+      cols: 50,
+      rows: 50,
       simulation_running: false,
-      current_generation: 0
+      current_generation: 0,
+      grid: null
     
 }
 
