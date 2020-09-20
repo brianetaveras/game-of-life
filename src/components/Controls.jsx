@@ -7,8 +7,6 @@ function Controls(props) {
         <button onClick={props.toggleSimulationStatus}>
           {props.simulation_running ? 'Pause' : 'Start'}
         </button>
-        <button>Clear</button>
-        <button>Random</button>
         <input
           onInput={props.handleInput}
           disabled={props.current_generation > 0}
