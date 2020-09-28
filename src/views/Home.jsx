@@ -1,61 +1,18 @@
 import React, { Component } from 'react';
-import StoreContext, { store } from '../store/store';
 import Viewer from '../components/3DViewer';
 import Controls from '../components/Controls';
 class Home extends Component {
 
-  constructor(props){
-    super(props)
-    this.toggleSimulationStatus = () =>{
-      this.setState(state=> ({
-        ...state,
-        simulation_running: !state.simulation_running
-      }))
-    }
-
-    this.increaseGeneration = () =>{
-      this.setState(state => ({
-        ...state,
-        current_generation: state.current_generation + 1
-      }))
-    }
-
-    this.handleInput = (e) => {
-      const value = e.target.value;
-      const name = e.target.name;
-      this.setState(state => ({
-        ...state,
-        [name]: value
-      }))
-    }
-
-  
-    this.state = {
-      ...store,
-      toggleSimulationStatus: this.toggleSimulationStatus,
-      increaseGeneration: this.increaseGeneration,
-      handleInput: this.handleInput
-    }
-
-    
-
-  }
 
   render() {
     return (
-      <StoreContext.Provider value={this.state}>
-        <StoreContext.Consumer>
-          {(store) =>{
-            return (
-            <div id="home-page">
-              <Controls {...store}/>
-              <Viewer {...store} />
-            </div>
 
-            )
-          }}
-        </StoreContext.Consumer>
-      </StoreContext.Provider>
+      <div id="home-page">
+        <Controls {...this.props} />
+        <Viewer {...this.props} />
+      </div>
+
+
     );
   }
 }
