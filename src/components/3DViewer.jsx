@@ -39,7 +39,7 @@ class Viewer extends Component {
 
 
   initialize() {
-    this.state.grid = this.make2DArray(this.props.cols, this.props.rows);
+    this.state.grid = this.create2DArray(this.props.cols, this.props.rows);
     this.state.scene = new THREE.Scene();
     this.state.renderer = new THREE.WebGLRenderer({ antialias: true });
     this.state.renderer.setClearColor(0x00000);
@@ -81,13 +81,13 @@ class Viewer extends Component {
     this.startAnimation();
   }
 
-  make2DArray(cols, rows) {
-    let arr = new Array(cols);
-    for (let i = 0; i < arr.length; i++) {
-      arr[i] = new Array(rows);
+  create2DArray(cols, rows) {
+    let array = new Array(cols);
+    for (let i = 0; i < array.length; i++) {
+      array[i] = new Array(rows);
     }
 
-    return arr;
+    return array;
   }
 
   draw = () => {
@@ -110,12 +110,13 @@ class Viewer extends Component {
 
     this.state.initial_state = false;
 
-    let next = this.make2DArray(this.props.cols, this.props.rows);
+    let next = this.create2DArray(this.props.cols, this.props.rows);
 
     for (let i = 0; i < this.props.cols; i++) {
       for (let j = 0; j < this.props.rows; j++) {
+        
         let state = this.state.grid[i][j];
-        // Count live neighbors!
+
         let neighbors = this.countNeighbors(this.state.grid, i, j);
 
         if (state == 0 && neighbors == 3) {
